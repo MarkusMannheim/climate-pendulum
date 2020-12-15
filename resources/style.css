@@ -49,12 +49,12 @@ h1, p {
 }
 #ticker {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 3rem;
+  right: 4rem;
   font-family: "ABCSans Black", "Arial Black", sans-serif;
-  font-size: 2.5rem;
-  color: #999;
-  text-shadow: 2px 2px 5px #ccc;
+  font-size: 4rem;
+  color: #e6e6e6;
+  text-shadow: 1px 1px 3px #333;
 }
 #footer {
   color: #666;
@@ -79,6 +79,9 @@ a, a:visited {
 #yAxisGroup .label {
   text-anchor: start;
 }
+#annualAxisGroup .label {
+  text-anchor: end;
+}
 .domain, .tick line {
   stroke: #ccc;
 }
@@ -93,6 +96,10 @@ a, a:visited {
   stroke: #333;
   stroke-width: .5;
   opacity: 0;
+}
+#tracker {
+  opacity: 1;
+  stroke: #333;
 }
 @media only screen and (min-width: 500px) {
   a:hover {
