@@ -97,8 +97,7 @@ a, a:visited {
   stroke-width: .5;
   opacity: 0;
 }
-#tracker {
-  opacity: 1;
+.tracker {
   stroke: #333;
 }
 @media only screen and (min-width: 500px) {

@@ -101,10 +101,6 @@
             .enter().append("circle")
               .classed("day", true)
               .style("fill", function(d) { return colour(d.max_temp); });
-          tracker = chartGroup
-            .append("circle")
-              .attr("id", "tracker")
-              .attr("r", 20);
           // draw chart
           window.addEventListener("resize", resize);
           d3.timeout(function() {
@@ -141,16 +137,22 @@
           .attr("r", 7.5)
           .transition()
             .duration(1)
-            .delay(function(d, i) { return i * 2; })
+            .delay(function(d, i) { return i * 4; })
             .style("opacity", .75)
             .on("start", function(d) {
               ticker.text(d3.timeFormat("%Y")(d.date));
-              tracker.attr("cx", x(d.temp_annual))
+              chartGroup.append("circle")
+                .classed("tracker", true)
+                .attr("r", 20)
+                .attr("cx", x(d.temp_annual))
                 .attr("cy", annual(d.rainfall_annual))
-                .style("fill", colour(d.temp_annual));
+                .style("fill", colour(d.temp_annual))
+                .transition()
+                  .duration(5000)
+                  .style("opacity", 0)
+                .remove();
             })
           .transition()
-            .duration(500)
             .style("opacity", 0);
       }
     </script>
