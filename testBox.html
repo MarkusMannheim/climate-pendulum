@@ -29,14 +29,15 @@
       </div>
     </div>
     <script>
-      // draw text box
-      container = d3.select("#container");
-      // draw chart
+      // dynamic width and height display
       window.addEventListener("resize", resize);
+      resize();
       function resize() {
         dimensions = document.getElementById("container").getBoundingClientRect();
         width = dimensions.width;
         height = dimensions.height;
+        d3.select("#width span").text(width);
+        d3.select("#height span").text(height);
       }
     </script>
   </body>
