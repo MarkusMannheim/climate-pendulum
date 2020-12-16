@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155991615-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "UA-155991615-1");
+    </script>
+    <!-- my stuff -->
+    <meta charset="utf-8">
+    <title>Climate pendulum</title>
+    <meta name="description" content="Charting Canberra's weather history.">
+    <meta name="keywords" content="weather, climate, temperature, preciptation, rainfall, soi, elnino, lanina">
+    <meta name="author" content="Markus Mannheim">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="./resources/testStyle.css" rel="stylesheet">
+    <link href="./resources/abcLogo64.png" rel="icon">
+  </head>
+  <body>
+    <!-- initial layout -->
+    <div id="container">
+      <div id="narrative">
+        <p id="width">width: <span></span> px</p>
+        <p id="height">height: <span></span> px</p>
+      </div>
+    </div>
+    <script>
+      // draw text box
+      container = d3.select("#container");
+      // draw chart
+      window.addEventListener("resize", resize);
+      function resize() {
+        dimensions = document.getElementById("container").getBoundingClientRect();
+        width = dimensions.width;
+        height = dimensions.height;
+      }
+    </script>
+  </body>
+</html>
