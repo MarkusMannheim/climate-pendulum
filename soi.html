@@ -16,8 +16,7 @@
     <meta name="keywords" content="weather, climate, temperature, precipitation, rainfall, soi, elnino, lanina">
     <meta name="author" content="Markus Mannheim">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <link href="./resources/soiStyle.css" rel="stylesheet">
     <link href="./resources/abcLogo64.png" rel="icon">
   </head>
@@ -27,7 +26,7 @@
       <svg id="chart">
         <defs>
           <clipPath id="chartClip">
-            <rect>
+            <rect></rect>
           </clipPath>
         </defs>
         <g id="chartGroup"></g>
@@ -36,67 +35,77 @@
           <g id="yAxisGroup">
             <text class="label">Southern Oscillation Index</text>
           </g>
-          <line id="zeroLine"></line>
         </g>
       </svg>
-      <div id="ticker"></div>
+      <div id="footer">
+        <div class="key">monthly average</div>
+        <div class="key">six-month average</div>
+      </div>
     </div>
     <script>
       // name page elements
       container = d3.select("#container");
-      ticker = d3.select("#ticker");
       chart = d3.select("#chart");
       chartClip = d3.select("#chartClip");
       chartGroup = d3.select("#chartGroup");
       axisGroup = d3.select("#axisGroup");
       xAxisGroup = d3.select("#xAxisGroup");
       yAxisGroup = d3.select("#yAxisGroup");
-      zeroLine = d3.select("#zeroLine");
-      // load  data
-      d3.csv("./data/soi_data.csv", function(error, data) {
-        if (error) throw error;
-        // format data
-        soiData = data
-          .map(function(d) {
-            return {
-              date: d3.timeParse("%Y-%m-%d")(d.month),
-              soi: +d.soi
-            };
-          })
-          .filter(function(d) {
-            return d.date > new Date(1970, 10, 1);
-          });
-        // prepare chart
-        // ticker.text(d3.timeFormat("%Y")(soiData[0].date));
-        margin = { top: 25, right: 25, bottom: 15, left: 5 };
-        x = d3.scaleTime()
-          .domain([soiData[0].date, soiData[119].date]);
-        xAxis = d3.axisBottom(x)
-          .tickSizeOuter(0)
-          .ticks(4, "%Y");
-        y = d3.scaleLinear()
-          .domain(d3.extent(soiData.map(function(d) { return d.soi; }))).nice();
-        yAxis = d3.axisRight(y)
-          .tickSizeOuter(0)
-          .ticks(4, "2s");
-        line = d3.line()
-          .x(function(d) { return x(d.date); })
-          .y(function(d) { return y(d.soi); })
-          .curve(d3.curveCardinal);
-        // draw chart
-        plot = chartGroup
-          .append("path")
-            .classed("plot", true);
-        window.addEventListener("resize", resize);
-        d3.timeout(function() {
-          d3.selectAll("#axisGroup, #chartGroup")
-            .transition()
-              .duration(1000)
-              .style("opacity", 1);
-          resize();
-          animate();
-        }, 500);
-      });
+      // load data
+      d3.csv("./data/soi_data.csv")
+        .then(function(data) {
+          // format data
+          soiData = data
+            .map(function(d) {
+              return {
+                date: d3.timeParse("%Y-%m-%d")(d.month),
+                soi: +d.soi,
+                mean: +d.mean
+              };
+            })
+            .filter(function(d) {
+              return d.date > new Date(1970, 10, 1);
+            });
+          // prepare chart
+
+          // ticker.text(d3.timeFormat("%Y")(soiData[0].date));
+          margin = { top: 25, right: 25, bottom: 15, left: 5 };
+          x = d3.scaleTime()
+            .domain([soiData[0].date, soiData[239].date]);
+          xAxis = d3.axisBottom(x)
+            .tickSizeOuter(0)
+            .ticks(4, "%Y");
+          y = d3.scaleLinear()
+            .domain(d3.extent(soiData.map(function(d) { return d.soi; }))).nice();
+          yAxis = d3.axisRight(y)
+            .tickSizeOuter(0)
+            .ticks(4, "2s");
+          line = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.soi); })
+            .curve(d3.curveCardinal);
+          lineMean = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.mean); })
+            .curve(d3.curveCardinal);
+          // draw chart
+          plot = chartGroup
+            .append("path")
+              .classed("plot", true);
+          plotMean = chartGroup
+            .append("path")
+              .classed("plot", true)
+              .classed("mean", true);
+          window.addEventListener("resize", resize);
+          d3.timeout(function() {
+            d3.selectAll("#axisGroup, #chartGroup")
+              .transition()
+                .duration(1000)
+                .style("opacity", 1);
+            resize();
+            animate();
+          }, 500);
+        });
       function resize() {
         dimensions = document.getElementById("chart").getBoundingClientRect();
         width = dimensions.width;
@@ -117,13 +126,14 @@
           .attr("width", width - margin.left - margin.right)
           .attr("height", height - margin.top - margin.bottom);
         plot.attr("d", line(soiData));
+        plotMean.attr("d", lineMean(soiData));
       }
       function animate() {
-        endFrame = 119;
-        loopTime = 50;
+        endFrame = 239;
+        loopTime = 25;
         d3.timeout(progress, 1000);
         function progress() {
-          x.domain([soiData[endFrame - 119].date, soiData[endFrame].date]);
+          x.domain([soiData[endFrame - 239].date, soiData[endFrame].date]);
           xAxisGroup.transition()
             .duration(loopTime)
             .ease(d3.easeLinear)
@@ -132,10 +142,44 @@
             .duration(loopTime)
             .ease(d3.easeLinear)
             .attr("d", line(soiData));
+          plotMean.transition()
+            .duration(loopTime)
+            .ease(d3.easeLinear)
+            .attr("d", lineMean(soiData));
           d3.timeout(function() {
             endFrame = endFrame + 1;
-            if (endFrame < soiData.length) progress();
+            if (endFrame < soiData.length) {
+              progress();
+            } else {
+              d3.timeout(stretch, 2000);
+              d3.timeout(contract, 5000);
+              d3.timeout(animate, 8000);
+            };
           }, loopTime);
+        }
+        function stretch() {
+          x.domain(d3.extent(soiData, function(d) { return d.date; }));
+          xAxisGroup.transition()
+            .duration(2000)
+            .call(xAxis);
+          plot.transition()
+            .duration(2000)
+            .attr("d", line(soiData));
+          plotMean.transition()
+            .duration(2000)
+            .attr("d", lineMean(soiData));
+        }
+        function contract() {
+          x.domain([soiData[0].date, soiData[239].date]);
+          xAxisGroup.transition()
+            .duration(2000)
+            .call(xAxis);
+          plot.transition()
+            .duration(2000)
+            .attr("d", line(soiData));
+          plotMean.transition()
+            .duration(2000)
+            .attr("d", lineMean(soiData));
         }
       }
     </script>

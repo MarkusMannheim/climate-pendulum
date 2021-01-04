@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155991615-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "UA-155991615-1");
+    </script>
+    <!-- my stuff -->
+    <meta charset="utf-8">
+    <title>Darwin and Tahiti</title>
+    <meta name="description" content="A map showing the Southern Oscilation Index's poles.">
+    <meta name="keywords" content="darwin, tahiti, weather, climate, temperature, rainfall, soi, elnino, lanina">
+    <meta name="author" content="Markus Mannheim">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <link href="./resources/mapStyle.css" rel="stylesheet">
+    <link href="./resources/abcLogo64.png" rel="icon">
+  </head>
+  <body>
+    <!-- initial layout -->
+    <div id="container">
+      <svg id="map">
+        <g id="mapGroup">
+          <path id="planet"></path>
+          <path id="graticule"></path>
+          <path id="land"></path>
+          <g id="places"></g>
+        </g>
+      </svg>
+      <div id="footer">Data: <a href='https://www.naturalearthdata.com/' target="_blank">Natural Earth</a></div>
+    </div>
+    <script>
+      // name page elements
+      container = d3.select("#container");
+      map = d3.select("#map");
+      mapGroup = d3.select("#mapGroup");
+      planet = d3.select("#planet");
+      graticule = d3.select("#graticule");
+      land = d3.select("#land");
+      places = d3.select("#places");
+      // load data
+      d3.json("./data/earth.topojson")
+        .then(function(data) {
+          // format data
+          landData = topojson.feature(data, data.objects.land);
+          placeData = {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                properties: { place: "Darwin" },
+                geometry: {
+                  type: "Point",
+                  coordinates: [130.841782, -12.462827]
+                }
+              },
+              {
+                type: "Feature",
+                properties: { place: "Tahiti" },
+                geometry: {
+                  type: "Point",
+                  coordinates: [-149.569595, -17.535000]
+                }
+              },
+            ]
+          };
+          // launch
+          d3.timeout(function() {
+            prepareMap();
+          }, 500);
+        });
+
+      function prepareMap() {
+        // map functions
+        centre = d3.geoCentroid(placeData);
+        projection = d3.geoOrthographic()
+          .rotate([0, -19]);
+        path = d3.geoPath()
+          .projection(projection);
+        planet.datum({type: "Sphere"});
+        graticule.datum(d3.geoGraticule());
+        land.datum(landData);
+        places.selectAll(".place")
+            .data(placeData.features)
+          .enter().append("path")
+            .classed("place", true);
+        labels = container
+          .selectAll(".label")
+            .data(placeData.features)
+          .enter().append("div")
+            .classed("label", true);
+        resize();
+        // fade in
+        d3.selectAll("#mapGroup, .label").transition()
+          .duration(1000)
+          .style("opacity", 1);
+        // rotate to location
+        rotate = d3.geoInterpolate(projection.rotate(), [-centre[0], -centre[1]]);
+        maxZoom = projection.scale();
+        zoom = d3.interpolate(0, maxZoom);
+        spin = d3.timer(function(elapsed) {
+          projection.rotate(rotate(d3.easeCubic(elapsed / 3000)))
+            .scale(zoom(d3.easeCubic(elapsed / 3000)));
+          d3.selectAll("#graticule, #land, #planet")
+            .attr("d", path);
+          d3.selectAll(".place")
+            .attr("d", function(d) {
+              return !path(d) ? "" : path(d);
+            });
+          d3.selectAll(".label")
+            .each(function(d) {
+              if (!path(d)) {
+                d3.select(this).style("visibility", "hidden");
+              } else {
+                d3.select(this).style("visibility", "visible");
+                let labelWidth = parseFloat(d3.select(this).style("width"));
+                d3.select(this).style("top", (projection(d.geometry.coordinates)[1] + (width < 500 ? 7.5 : 12.5)) + "px")
+                  .style("left", (projection(d.geometry.coordinates)[0] - labelWidth / 2) + "px");
+              }
+            });
+          if (elapsed > 3000) spin.stop();
+        });
+      }
+      function resize() {
+        dimensions = document.getElementById("map").getBoundingClientRect();
+        width = dimensions.width;
+        height = dimensions.height;
+        projection.translate([width / 2, height / 2])
+          .fitSize([width, height], {type: "Sphere"});
+        path.pointRadius(width < 500 ? 5 : 10);
+        mapGroup.selectAll("path")
+          .attr("d", path);
+      }
+    </script>
+  </body>
+</html>

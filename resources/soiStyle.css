@@ -15,18 +15,6 @@ green: #00A388
   font-weight: normal;
   src: local("ABCSans Regular"), url("../fonts/abcsans-regular.woff") format("woff");
 }
-@font-face {
-  font-family: "ABCSans Light";
-  font-style: normal;
-  font-weight: normal;
-  src: local("ABCSans Light"), url("../fonts/abcsans-light.woff") format("woff");
-}
-@font-face {
-  font-family: "ABCSans Black";
-  font-style: normal;
-  font-weight: normal;
-  src: local("ABCSans Black"), url("../fonts/abcsans-black.woff") format("woff");
-}
 :root {
   font-size: 1em;
   font-family: "ABCSans Regular", "Arial", sans-serif;
@@ -46,17 +34,24 @@ h1, p {
   right: 0;
   display: flex;
   flex-flow: column;
-}
-#ticker {
-  position: fixed;
-  right: 1rem;
-  font-family: "ABCSans Black", "Arial Black", sans-serif;
-  font-size: 4rem;
-  color: #e6e6e6;
-  text-shadow: 1px 1px 3px #333;
+  margin-bottom: 1em;
 }
 #chart {
   height: 100%;
+}
+#footer {
+  display: flex;
+}
+.key {
+  font-size: .7rem;
+  margin-right: 1rem;
+  padding: .5rem 0 .25rem 0;
+  width: 100px;
+  border-bottom: #009CBF solid .5px;
+  text-align: center;
+}
+.key:last-child {
+  border-bottom: #009CBF solid 2px;
 }
 #axisGroup, #chartGroup {
   opacity: 0;
@@ -86,6 +81,11 @@ h1, p {
 .plot {
   fill: none;
   stroke: #009CBF;
+  stroke-width: .5;
+  stroke-linecap: round;
+}
+.mean {
+  stroke-width: 2;
 }
 @media only screen and (min-width: 500px) {
 }
