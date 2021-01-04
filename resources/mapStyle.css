@@ -102,5 +102,7 @@ a, a:visited {
   }
   #footer {
     font-size: .8rem;
+    position: fixed;
+    bottom: 1rem;
   }
 }
