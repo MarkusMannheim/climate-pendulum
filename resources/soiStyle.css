@@ -80,7 +80,7 @@ h1, p {
 }
 .plot {
   fill: none;
-  stroke: #009CBF;
+  stroke: url(#gradient);
   stroke-width: .5;
   stroke-linecap: round;
 }
