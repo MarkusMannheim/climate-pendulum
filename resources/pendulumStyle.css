@@ -1,0 +1,95 @@
+/* colours
+blue: #009CBF
+orange: #F75F00
+green: #00A388
+--tint-1: #333;
+--tint-2: #666;
+--tint-3: #999;
+--tint-4: #ccc;
+--tint-5: #e6e6e6;
+--tint-6: #f2f2f2;
+ */
+@font-face {
+  font-family: "ABCSans Regular";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Regular"), url("../fonts/abcsans-regular.woff") format("woff");
+}
+:root {
+  font-size: 1em;
+  font-family: "ABCSans Regular", "Arial", sans-serif;
+  color: #333;
+}
+body {
+  overflow: hidden;
+}
+h1, p {
+  margin: 0;
+}
+#container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: column;
+  margin-bottom: 1em;
+}
+#chart {
+  height: 100%;
+}
+#footer {
+  display: flex;
+}
+.key {
+  font-size: .7rem;
+  margin-right: 1rem;
+  padding: .5rem 0 .25rem 0;
+  width: 100px;
+  border-bottom: #009CBF solid .5px;
+  text-align: center;
+}
+.key:last-child {
+  border-bottom: #009CBF solid 2px;
+}
+#axisGroup, #chartGroup {
+  opacity: 0;
+}
+#chartGroup {
+  clip-path: url(#chartClip);
+}
+#axisGroup .label {
+  fill: #666;
+  font-size: .9rem;
+  font-weight: bold;
+  text-anchor: end;
+}
+.domain {
+  stroke: none;
+}
+.tick line {
+  stroke: #ccc;
+}
+.tick line {
+  stroke-dasharray: 3 3;
+}
+.tick text {
+  fill: #666;
+  font-size: .7rem;
+}
+.plot {
+  fill: none;
+  stroke: url(#gradient);
+  stroke-width: .5;
+  stroke-linecap: round;
+}
+.mean {
+  stroke-width: 2;
+}
+@media only screen and (min-width: 500px) {
+  .key {
+    font-size: .8rem;
+    width: 120px;
+  }
+}

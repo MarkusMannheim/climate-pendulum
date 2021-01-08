@@ -46,12 +46,13 @@ h1, p {
   right: 0;
   display: flex;
   flex-flow: column;
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 }
 #map {
   height: 100%;
 }
 #footer {
+  margin-top: .5rem;
   font-size: .7rem;
 }
 a, a:visited {
@@ -102,7 +103,6 @@ a, a:visited {
   }
   #footer {
     font-size: .8rem;
-    position: fixed;
-    bottom: 1rem;
+    margin-top: 1rem;
   }
 }
