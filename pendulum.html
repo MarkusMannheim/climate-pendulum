@@ -40,29 +40,50 @@
       </svg>
       <div id="ticker"></div>
       <svg id="climateChart">
-        <text id="climateLabel" class="label" y=15>Canberra weather</text>
+        <text id="climateLabel" class="label" y=15>Canberra's monthly weather</text>
         <g id="climateAxisGroup">
-          <g id="xAxis">
-            <text id="xAxis" class="axisLabel">average maximum temperature (°C)</text>
+          <g id="xAxisGroup">
+            <text id="xAxisLabel" class="axisLabel" y=35>average maximum temperature (°C)</text>
           </g>
-          <g id="yAxis">
-            <text id="yAxis" class="axisLabel">rainfall</text>
+          <g id="yAxisGroup">
+            <text id="yAxisLabel" class="axisLabel">rainfall</text>
           </g>
         </g>
-        <g id="climateChartGroup"></g>
+        <g id="climateChartGroup">
+          <g id="averageRainfallGroup">
+            <line id="averageRainfall" class="averageLine"></line>
+            <text id="averageLabel">FIVE-YEAR AVERAGE</text>
+          </g>
+          <g id="averageTemperatureGroup">
+            <line id="averageTemperature" class="averageLine"></line>
+          </g>
+        </g>
       </svg>
+      <div id="footer">Despite the swings of El Niño and La Niña, Canberra has steadily become much hotter and slightly drier over the past 50 years. Data: <a href='http://www.bom.gov.au/climate/data/' target='_blank'>Bureau of Meteorology</a></div>
     </div>
     <script>
       // name page elements
       container = d3.select("#container");
       soiChart = d3.select("#soiChart");
+      climateChart = d3.select("#climateChart");
       soiChartGroup = d3.select("#soiChartGroup");
+      climateChartGroup = d3.select("#climateChartGroup");
       soiAxisGroup = d3.select("#soiAxisGroup");
+      xAxisGroup = d3.select("#xAxisGroup");
+      yAxisGroup = d3.select("#yAxisGroup");
       soiLabel = d3.select("#soiLabel");
+      xAxisLabel = d3.select("#xAxisLabel");
+      yAxisLabel = d3.select("#yAxisLabel");
+      climateLabel = d3.select("#climateLabel");
       soiSubLabel = d3.select("#soiSubLabel");
       soiEl = d3.select("#soiEl");
       soiLa = d3.select("#soiLa");
       ticker = d3.select("#ticker");
+      averageRainfallGroup = d3.select("#averageRainfallGroup");
+      averageRainfall = d3.select("#averageRainfall");
+      averageTemperatureGroup = d3.select("#averageTemperatureGroup");
+      averageTemperature = d3.select("#averageTemperature");
+      averageLabel = d3.select("#averageLabel");
       // load data
       Promise.all([
         d3.csv("./data/soi_data.csv"),
@@ -82,30 +103,46 @@
               return {
                 date: d3.timeParse("%Y-%m-%d")(d.date),
                 rainfall: +d.rainfall,
-                max_temp: +d.max_temp
+                max_temp: +d.max_temp,
+                mean_temp: +d.mean_temp,
+                mean_rainfall: +d.mean_rainfall
               };
             });
           // prepare chart
           soiColour = d3.scaleLinear()
             .domain(d3.extent(soiData, function(d) { return d.soi; }))
             .range(["#00A388", "#009CBF"])
-            .interpolate(d3.interpolateRgb);
+            .interpolate(d3.interpolateHsl);
+          climateExtent = d3.extent(climateData, function(d) { return d.max_temp; });
           soiScale = d3.scaleLinear()
             .domain(soiColour.domain());
+          xScale = d3.scaleLinear()
+            .domain(d3.extent(climateData, function(d) { return d.max_temp; }));
+          yScale = d3.scaleLinear()
+            .domain(d3.extent(climateData, function(d) { return d.rainfall; }));
           soiAxis = d3.axisBottom(soiScale)
             .ticks(5)
             .tickSizeOuter(0)
             .tickSizeInner(10)
             .tickPadding(7.5);
+          xAxis = d3.axisBottom(xScale)
+            .ticks(5)
+            .tickSizeOuter(0)
+            .tickPadding(7.5);
+          yAxis = d3.axisLeft(yScale)
+            .ticks(5)
+            .tickSizeOuter(0)
+            .tickPadding(7.5);
           soiMarker = soiChartGroup
             .append("circle")
               .attr("id", "soiMarker");
-          // ticker.text(d3.timeFormat("%Y")(soiData[0].date));
-          margin = { top: 55, right: 65, bottom: 5, left: 65 };
+          ticker.text(d3.timeFormat("%Y")(soiData[0].date));
+          soiMargin = { top: 55, right: 65, bottom: 0, left: 65 };
+          climateMargin = { top: 40, right: 10, bottom: 40, left: 35 };
           // draw chart
           window.addEventListener("resize", resize);
           d3.timeout(function() {
-            d3.selectAll("svg")
+            d3.selectAll("svg, #ticker")
               .transition()
                 .duration(500)
                 .style("opacity", 1);
@@ -117,30 +154,75 @@
         dimensions = document.getElementById("climateChart").getBoundingClientRect();
         width = dimensions.width;
         height = dimensions.height;
-        soiScale.range([margin.left, width - margin.right]);
+        soiScale.range([soiMargin.left, width - soiMargin.right]);
+        xScale.range([climateMargin.left, width - climateMargin.right]);
+        yScale.range([height - climateMargin.bottom, climateMargin.top]);
         soiLabel.attr("x", width / 2);
+        xAxisLabel.attr("x", width / 2);
+        yAxisLabel.attr("y", climateMargin.top - 5);
+        xAxis.tickSizeInner(climateMargin.top + climateMargin.bottom - height);
+        yAxis.tickSizeInner(climateMargin.left + climateMargin.right - width);
+        climateLabel.attr("x", width / 2);
         soiSubLabel.attr("x", width / 2);
-        soiEl.attr("x", margin.left - 15);
-        soiLa.attr("x", width - margin.right + 15);
-        soiAxisGroup.attr("transform", "translate(0, " + margin.top + ")")
+        soiEl.attr("x", soiMargin.left - 15);
+        soiLa.attr("x", width - soiMargin.right + 15);
+        soiAxisGroup.attr("transform", "translate(0, " + soiMargin.top + ")")
           .call(soiAxis);
+        xAxisGroup.attr("transform", "translate(0, " + (height - climateMargin.bottom) + ")")
+          .call(xAxis);
+        yAxisGroup.attr("transform", "translate(" + climateMargin.left + ", 0)")
+          .call(yAxis);
         soiMarker.attr("r", width < 500 ? 10 : 12.5)
-          .attr("cy", margin.top);
+          .attr("cy", soiMargin.top);
+        averageRainfall.attr("x1", climateMargin.left)
+          .attr("x2", width - climateMargin.right);
+        averageTemperature.attr("y1", climateMargin.top)
+          .attr("y2", height - climateMargin.bottom);
+        averageLabel.attr("x", climateMargin.left + 10);
       }
       function animate() {
         month = 0;
+        count = 80;
         timeLoop();
         function timeLoop() {
           ticker.text(d3.timeFormat("%Y")(soiData[month].date));
           soiMarker.transition()
-            .duration(50)
+            .duration(count)
             .ease(d3.easeLinear)
-            .attr("cx", function() { return soiScale(soiData[month].mean); })
-            .style("fill", function() { return soiColour(soiData[month].mean); })
+            .attr("cx", soiScale(soiData[month].mean))
+            .style("fill", soiColour(soiData[month].mean))
           .on("end", function() {
             month = month + 1;
-            if (month < soiData.length) timeLoop();
+            if (month < soiData.length) {
+              timeLoop();
+            } else {
+              d3.timeout(animate, 3000);
+            };
           });
+          climateChartGroup.append("circle")
+            .classed("month", true)
+            .attr("r", width < 500 ? 7.5 : 10)
+            .attr("cx", xScale(climateData[month].max_temp))
+            .attr("cy", yScale(climateData[month].rainfall))
+            .transition()
+              .duration(count * 6)
+              .style("opacity", .20)
+            .transition()
+              .duration(count * 24)
+              .style("opacity", 0)
+            .remove();
+          averageRainfall.transition()
+            .duration(count)
+            .ease(d3.easeLinear)
+            .attr("y1", yScale(climateData[month].mean_rainfall))
+            .attr("y2", yScale(climateData[month].mean_rainfall));
+          averageTemperature.transition()
+            .duration(count)
+            .ease(d3.easeLinear)
+            .attr("x1", xScale(climateData[month].mean_temp))
+            .attr("x2", xScale(climateData[month].mean_temp));
+          averageLabel.attr("x", climateMargin.left + 5)
+            .attr("y", yScale(climateData[month].mean_rainfall) - 5);
         }
       }
     </script>

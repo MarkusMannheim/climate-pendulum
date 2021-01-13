@@ -47,11 +47,11 @@ h1, p {
   flex-flow: column;
   margin-bottom: 1em;
 }
-svg {
+svg, #ticker {
   opacity: 0;
 }
 #soiChart {
-  height: 100px;
+  height: 150px;
 }
 .label, .subLabel {
   fill: #666;
@@ -75,29 +75,82 @@ svg {
 }
 #soiMarker {
   stroke: #666;
-}
-.domain, .tick line {
-  stroke: #e6e6e6;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-.domain {
-  stroke-width: 5;
+  stroke-width: .5;
 }
 .tick text {
   fill: #666;
   font-size: .7rem;
+  font-family: "ABCSans Light", "Arial Narrow", sans-serif;
+}
+.domain, .tick line {
+  stroke: #e6e6e6;
+}
+#climateAxisGroup .domain {
+  stroke: none;
+}
+#climateAxisGroup .tick line {
+  stroke-dasharray: 2 2;
+}
+#soiAxisGroup .domain, #soiAxisGroup .tick line {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+#soiAxisGroup .domain {
+  stroke-width: 5;
 }
 #ticker {
   font-family: "ABCSans Black", "Arial Black", sans-serif;
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #ccc;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: .25rem;
+}
+#climateChart {
+  height: 100%;
+}
+.axisLabel {
+  fill: #666;
+  font-size: .75rem;
+}
+#yAxisLabel {
+  text-anchor: middle;
+}
+.month {
+  stroke: #333;
+  stroke-width: .5;
+  opacity: 1;
+  fill: #009CBF;
+}
+.averageLine {
+  stroke: #F75F00;
+  stroke-width: 2;
+  stroke-dasharray: 3 2;
+}
+#averageLabel {
+  fill: #F75F00;
+  font-size: .7rem;
+}
+#footer {
+  margin-top: .5rem;
+  font-size: .7rem;
+}
+a, a:visited {
+  color: #009CBF;
+  text-decoration: none;
 }
 @media only screen and (min-width: 500px) {
-  .key {
+  #ticker {
+    font-size: 2.5rem;
+    margin-bottom: .5rem 0;
+  }
+  a:hover {
+    color: #FFB300;
+  }
+  .label {
+    font-size: .9rem;
+  }
+  #footer {
     font-size: .8rem;
-    width: 120px;
+    margin-top: 1rem;
   }
 }
