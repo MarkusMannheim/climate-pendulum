@@ -15,6 +15,17 @@ green: #00A388
   font-weight: normal;
   src: local("ABCSans Regular"), url("../fonts/abcsans-regular.woff") format("woff");
 }
+@font-face {
+  font-family: "ABCSans Black";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Black"), url("../fonts/abcsans-black.woff") format("woff");
+}@font-face {
+  font-family: "ABCSans Light";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Light"), url("../fonts/abcsans-light.woff") format("woff");
+}
 :root {
   font-size: 1em;
   font-family: "ABCSans Regular", "Arial", sans-serif;
@@ -36,56 +47,53 @@ h1, p {
   flex-flow: column;
   margin-bottom: 1em;
 }
-#chart {
-  height: 100%;
-}
-#footer {
-  display: flex;
-}
-.key {
-  font-size: .7rem;
-  margin-right: 1rem;
-  padding: .5rem 0 .25rem 0;
-  width: 100px;
-  border-bottom: #009CBF solid .5px;
-  text-align: center;
-}
-.key:last-child {
-  border-bottom: #009CBF solid 2px;
-}
-#axisGroup, #chartGroup {
+svg {
   opacity: 0;
 }
-#chartGroup {
-  clip-path: url(#chartClip);
+#soiChart {
+  height: 100px;
 }
-#axisGroup .label {
+.label, .subLabel {
   fill: #666;
   font-size: .9rem;
   font-weight: bold;
+  text-anchor: middle;
+}
+.subLabel {
+  font-size: .65rem;
+  font-family: "ABCSans Light", "Arial Narrow", sans-serif;
+}
+.soiPole {
+  font-size: .70rem;
+  font-weight: bold;
+  fill: #00A388;
   text-anchor: end;
 }
+#soiLa {
+  fill: #009CBF;
+  text-anchor: start;
+}
+#soiMarker {
+  stroke: #666;
+}
+.domain, .tick line {
+  stroke: #e6e6e6;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
 .domain {
-  stroke: none;
-}
-.tick line {
-  stroke: #ccc;
-}
-.tick line {
-  stroke-dasharray: 3 3;
+  stroke-width: 5;
 }
 .tick text {
   fill: #666;
   font-size: .7rem;
 }
-.plot {
-  fill: none;
-  stroke: url(#gradient);
-  stroke-width: .5;
-  stroke-linecap: round;
-}
-.mean {
-  stroke-width: 2;
+#ticker {
+  font-family: "ABCSans Black", "Arial Black", sans-serif;
+  font-size: 2.5rem;
+  color: #ccc;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 @media only screen and (min-width: 500px) {
   .key {

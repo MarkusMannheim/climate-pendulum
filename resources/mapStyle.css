@@ -55,6 +55,10 @@ h1, p {
   margin-top: .5rem;
   font-size: .7rem;
 }
+#footer {
+  margin-top: .5rem;
+  font-size: .7rem;
+}
 a, a:visited {
   color: #009CBF;
   text-decoration: none;

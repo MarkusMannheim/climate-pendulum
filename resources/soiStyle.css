@@ -42,6 +42,10 @@ h1, p {
 #footer {
   display: flex;
 }
+#footer2 {
+  margin-top: 1rem;
+  font-size: .7rem;
+}
 .key {
   font-size: .7rem;
   margin-right: 1rem;
@@ -70,8 +74,6 @@ h1, p {
 }
 .tick line {
   stroke: #ccc;
-}
-.tick line {
   stroke-dasharray: 3 3;
 }
 .tick text {
@@ -91,5 +93,8 @@ h1, p {
   .key {
     font-size: .8rem;
     width: 120px;
+  }
+  #footer2 {
+    font-size: .8rem;
   }
 }

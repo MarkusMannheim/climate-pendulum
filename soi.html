@@ -45,6 +45,7 @@
         <div class="key">monthly average</div>
         <div class="key">six-month average</div>
       </div>
+      <div id="footer2">An index above 7 over a sustained period indicates La Niña;  below minus 7 indicates El Niño.</div>
     </div>
     <script>
       // name page elements
@@ -104,7 +105,7 @@
           d3.timeout(function() {
             d3.selectAll("#axisGroup, #chartGroup")
               .transition()
-                .duration(1000)
+                .duration(500)
                 .style("opacity", 1);
             resize();
             animate();
