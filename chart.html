@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155991615-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "UA-155991615-1");
+    </script>
+    <!-- my stuff -->
+    <meta charset="utf-8">
+    <title>Canberra weather</title>
+    <meta name="description" content="Canberra Airport temperature and rainfall over 50 years.">
+    <meta name="keywords" content="weather, climate, temperature, precipitation, rainfall, soi, elnino, lanina, canberra, act">
+    <meta name="author" content="Markus Mannheim">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link href="./resources/chartStyle.css" rel="stylesheet">
+    <link href="./resources/abcLogo64.png" rel="icon">
+  </head>
+  <body>
+    <!-- initial layout -->
+    <div id="container">
+      <svg id="chart">
+        <text id="title" y=15>Canberra Airport monthly observations</text>
+        <text id="subTitle" y=30>(moving five-year averages)</text>
+        <g id="axisGroup">
+          <g id="xAxisGroup"></g>
+          <g id="yAxisTempGroup">
+            <text class="axisLabel">maximum temperature (°C)</text>
+          </g>
+          <g id="yAxisRainGroup">
+            <text class="axisLabel">rainfall (mm)</text>
+          </g>
+        </g>
+        <g id="chartGroup">
+          <path class="plot" id="rainfall"></path>
+          <path class="plot" id="temperature"></path>
+        </g>
+      </svg>
+      <div id="footer">Canberra has become much hotter and a little drier over the past 50 years. Data: <a href='http://www.bom.gov.au/climate/data/' target='_blank'>Bureau of Meteorology</a></div>
+    </div>
+    <script>
+      // name page elements
+      container = d3.select("#container");
+      chart = d3.select("#chart");
+      chartGroup = d3.select("#chartGroup");
+      axisGroup = d3.select("#axisGroup");
+      xAxisGroup = d3.select("#xAxisGroup");
+      yAxisTempGroup = d3.select("#yAxisTempGroup");
+      yAxisRainGroup = d3.select("#yAxisRainGroup");
+      plotRain = d3.select("#rainfall");
+      plotTemp = d3.select("#temperature");
+      // load data
+      d3.csv("./data/climate_data.csv")
+        .then(function(data) {
+          // format data
+          climateData = data
+            .map(function(d) {
+              return {
+                date: d3.timeParse("%Y-%m-%d")(d.date),
+                rainfall: +d.rainfall,
+                max_temp: +d.max_temp,
+                mean_temp: +d.mean_temp,
+                mean_rainfall: +d.mean_rainfall
+              };
+            });
+          // prepare chart
+
+          margin = { top: 65, right: 35, bottom: 20, left: 25 };
+          x = d3.scaleTime()
+            .domain(d3.extent(climateData, function(d) { return d.date; }));
+          xAxis = d3.axisBottom(x)
+            .tickSizeOuter(0)
+            .ticks(4, "%Y")
+            .tickPadding(7.5);
+          yTemp = d3.scaleLinear()
+            .domain(d3.extent(climateData, function(d) { return d.mean_temp; })).nice();
+          yRain = d3.scaleLinear()
+            .domain(d3.extent(climateData, function(d) { return d.mean_rainfall; })).nice();
+          yAxisRain = d3.axisLeft(yRain)
+            .tickSizeOuter(0)
+            .ticks(4, "2s")
+            .tickPadding(7.5);
+          yAxisTemp = d3.axisRight(yTemp)
+            .tickSize(0)
+            .ticks(4, "2s")
+            .tickPadding(7.5);
+          lineTemp = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return yTemp(d.mean_temp); })
+            .curve(d3.curveCardinal);
+          lineRain = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return yRain(d.mean_rainfall); })
+            .curve(d3.curveCardinal);
+          // fade in and begin
+          window.addEventListener("resize", resize);
+          d3.timeout(function() {
+            d3.selectAll("#axisGroup, #chartGroup")
+              .transition()
+                .duration(500)
+                .style("opacity", 1);
+            resize();
+          }, 500);
+        });
+      function resize() {
+        dimensions = document.getElementById("chart").getBoundingClientRect();
+        width = dimensions.width;
+        height = dimensions.height;
+        x.range([margin.left, width - margin.right]);
+        yTemp.range([height - margin.bottom, margin.top]);
+        yRain.range([height - margin.bottom, margin.top]);
+        xAxis.tickSizeInner(margin.top + margin.bottom - height);
+        yAxisRain.tickSizeInner(margin.left + margin.right - width);
+        xAxisGroup.attr("transform", "translate(0, " + (height - margin.bottom) + ")")
+          .call(xAxis);
+        yAxisRainGroup.attr("transform", "translate(" + margin.left + ", 0)")
+          .call(yAxisRain);
+        yAxisTempGroup.attr("transform", "translate(" + (width - margin.right) + ", 0)")
+          .call(yAxisTemp);
+        plotTemp.attr("d", lineTemp(climateData));
+        plotRain.attr("d", lineRain(climateData));
+        d3.select("#yAxisTempGroup .axisLabel").attr("y", margin.top - 10)
+          .attr("x", margin.right - 5);
+        d3.select("#yAxisRainGroup .axisLabel").attr("y", margin.top - 10)
+          .attr("x", 5 - margin.left);
+      }
+    </script>
+  </body>
+</html>

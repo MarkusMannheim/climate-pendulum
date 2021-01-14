@@ -15,6 +15,13 @@ green: #00A388
   font-weight: normal;
   src: local("ABCSans Regular"), url("../fonts/abcsans-regular.woff") format("woff");
 }
+@font-face {
+  font-family: "ABCSans Light";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Light"), url("../fonts/abcsans-light.woff") format("woff");
+}
+
 :root {
   font-size: 1em;
   font-family: "ABCSans Regular", "Arial", sans-serif;
@@ -38,10 +45,9 @@ h1, p {
 }
 #chart {
   height: 100%;
-  background: aliceblue;
 }
 #footer {
-  margin-top: 1rem;
+  margin-top: .5rem;
   font-size: .7rem;
 }
 a, a:visited {
@@ -71,8 +77,28 @@ a, a:visited {
 .plot {
   stroke: #F75F00;
   fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
+}
+#rainfall {
+  stroke: #009CBF;
+}
+.axisLabel {
+  fill: #009CBF;
+  font-size: .75rem;
+  font-weight: bold;
+  text-anchor: start;
+}
+#yAxisTempGroup .axisLabel {
+  fill: #F75F00;
+  text-anchor: end;
+}
+#title {
+  fill: #333;
+  font-size: .9rem;
+  font-weight: bold;
+}
+#subTitle {
+  font-size: .75rem;
+  font-family: "ABCSans Light", "Arial Narrow", sans-serif;
 }
 @media only screen and (min-width: 500px) {
   a:hover {
@@ -80,5 +106,8 @@ a, a:visited {
   }
   #footer {
     font-size: .8rem;
+  }
+  #title {
+    font-size: 1rem;
   }
 }
