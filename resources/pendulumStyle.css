@@ -15,6 +15,17 @@ green: #00A388
   font-weight: normal;
   src: local("ABCSans Regular"), url("../fonts/abcsans-regular.woff") format("woff");
 }
+@font-face {
+  font-family: "ABCSans Black";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Black"), url("../fonts/abcsans-black.woff") format("woff");
+}@font-face {
+  font-family: "ABCSans Light";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Light"), url("../fonts/abcsans-light.woff") format("woff");
+}
 :root {
   font-size: 1em;
   font-family: "ABCSans Regular", "Arial", sans-serif;
@@ -36,49 +47,110 @@ h1, p {
   flex-flow: column;
   margin-bottom: 1em;
 }
-#chart {
+svg, #ticker {
+  opacity: 0;
+}
+#soiChart {
+  height: 150px;
+}
+.label, .subLabel {
+  fill: #666;
+  font-size: .9rem;
+  font-weight: bold;
+  text-anchor: middle;
+}
+.subLabel {
+  font-size: .65rem;
+  font-family: "ABCSans Light", "Arial Narrow", sans-serif;
+}
+.soiPole {
+  font-size: .70rem;
+  font-weight: bold;
+  fill: #00A388;
+  text-anchor: end;
+}
+#soiLa {
+  fill: #009CBF;
+  text-anchor: start;
+}
+#soiMarker {
+  stroke: #666;
+  stroke-width: .5;
+}
+.tick text {
+  fill: #666;
+  font-size: .7rem;
+  font-family: "ABCSans Light", "Arial Narrow", sans-serif;
+}
+.domain, .tick line {
+  stroke: #e6e6e6;
+}
+#climateAxisGroup .domain {
+  stroke: none;
+}
+#climateAxisGroup .tick line {
+  stroke-dasharray: 2 2;
+}
+#soiAxisGroup .domain, #soiAxisGroup .tick line {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+#soiAxisGroup .domain {
+  stroke-width: 5;
+}
+#ticker {
+  font-family: "ABCSans Black", "Arial Black", sans-serif;
+  font-size: 2rem;
+  color: #ccc;
+  text-align: center;
+  margin-bottom: .25rem;
+}
+#climateChart {
   height: 100%;
-  background: aliceblue;
+}
+.axisLabel {
+  fill: #666;
+  font-size: .75rem;
+}
+#yAxisLabel {
+  text-anchor: middle;
+}
+.month {
+  stroke: #333;
+  stroke-width: .5;
+  opacity: 1;
+  fill: #009CBF;
+}
+.averageLine {
+  stroke: #F75F00;
+  stroke-width: 2;
+  stroke-dasharray: 3 2;
+}
+#averageLabel {
+  fill: #F75F00;
+  font-size: .7rem;
 }
 #footer {
-  margin-top: 1rem;
+  margin-top: .5rem;
   font-size: .7rem;
 }
 a, a:visited {
   color: #009CBF;
   text-decoration: none;
 }
-#axisGroup, #chartGroup {
-  opacity: 0;
-}
-#axisGroup .label {
-  fill: #666;
-  font-size: .9rem;
-  font-weight: bold;
-  text-anchor: end;
-}
-.domain {
-  stroke: #ccc;
-}
-.tick line {
-  stroke: #ccc;
-  stroke-dasharray: 3 3;
-}
-.tick text {
-  fill: #666;
-  font-size: .7rem;
-}
-.plot {
-  stroke: #F75F00;
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
 @media only screen and (min-width: 500px) {
+  #ticker {
+    font-size: 2.5rem;
+    margin-bottom: .5rem 0;
+  }
   a:hover {
     color: #FFB300;
   }
+  .label {
+    font-size: .9rem;
+  }
   #footer {
     font-size: .8rem;
+    margin-top: 1rem;
   }
 }
